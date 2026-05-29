@@ -264,13 +264,10 @@ function createCard(item) {
 
 function renderResults() {
   const { reach, match, safe } = currentResults;
-  const hasResults = reach.length > 0 || match.length > 0 || safe.length > 0;
 
-  document.getElementById('emptyState').style.display = hasResults ? 'none' : 'block';
-  document.getElementById('results').style.display = hasResults ? 'flex' : 'none';
-  document.getElementById('categoryFilter').style.display = hasResults ? 'flex' : 'none';
-
-  if (!hasResults) return;
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('results').style.display = 'flex';
+  document.getElementById('categoryFilter').style.display = 'flex';
 
   document.getElementById('reachList').innerHTML = reach.length > 0
     ? reach.map(createCard).join('')
