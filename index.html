@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>河南高考志愿推荐 · 985/211</title>
+  <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --blue: #2563eb;
+  --blue-light: #eff6ff;
+  --blue-dark: #1d4ed8;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-500: #6b7280;
+  --gray-700: #374151;
+  --gray-900: #111827;
+  --reach: #ef4444;
+  --match: #f59e0b;
+  --safe: #10b981;
+  --radius: 12px;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  background: var(--gray-50);
+  color: var(--gray-900);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container { max-width: 480px; margin: 0 auto; padding: 20px 16px 40px; }
+
+.header { text-align: center; margin-bottom: 24px; }
+.header h1 { font-size: 22px; font-weight: 700; color: var(--gray-900); }
+.header .subtitle { font-size: 13px; color: var(--gray-500); margin-top: 4px; }
+
+.input-mode-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+.mode-tab {
+  flex: 1; padding: 10px; border: 1px solid var(--gray-200); border-radius: var(--radius);
+  background: white; font-size: 14px; color: var(--gray-700); cursor: pointer;
+  transition: all 0.2s;
+}
+.mode-tab.active { background: var(--blue); color: white; border-color: var(--blue); }
+
+.search-area { background: white; border-radius: var(--radius); padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.input-wrapper { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.main-input {
+  flex: 1; padding: 14px 16px; border: 2px solid var(--gray-200); border-radius: var(--radius);
+  font-size: 20px; font-weight: 600; outline: none; transition: border-color 0.2s;
+  -moz-appearance: textfield;
+}
+.main-input::-webkit-outer-spin-button,
+.main-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.main-input:focus { border-color: var(--blue); }
+.input-unit { font-size: 16px; color: var(--gray-500); min-width: 24px; }
+
+.search-btn {
+  width: 100%; padding: 14px; background: var(--blue); color: white; border: none;
+  border-radius: var(--radius); font-size: 16px; font-weight: 600; cursor: pointer;
+  transition: background 0.2s;
+}
+.search-btn:active { background: var(--blue-dark); }
+
+.category-filter {
+  display: flex; gap: 8px; margin: 16px 0; overflow-x: auto; padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+.cat-btn {
+  flex-shrink: 0; padding: 8px 16px; border: 1px solid var(--gray-200); border-radius: 20px;
+  background: white; font-size: 13px; color: var(--gray-700); cursor: pointer;
+  transition: all 0.2s; white-space: nowrap;
+}
+.cat-btn.active { background: var(--blue); color: white; border-color: var(--blue); }
+
+.results { display: flex; gap: 12px; margin-top: 16px; }
+.result-column { flex: 1; min-width: 0; }
+.column-header { text-align: center; padding: 10px 8px; border-radius: var(--radius) var(--radius) 0 0; font-size: 15px; font-weight: 700; color: white; }
+.column-reach { background: var(--reach); }
+.column-match { background: var(--match); }
+.column-safe { background: var(--safe); }
+.column-info { text-align: center; font-size: 11px; color: var(--gray-500); padding: 6px; background: var(--gray-100); }
+
+.card-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+
+.school-card {
+  background: white; border-radius: var(--radius); padding: 12px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04); border-left: 3px solid var(--gray-300);
+}
+.school-card .school-name { font-size: 14px; font-weight: 700; color: var(--gray-900); }
+.school-card .school-group { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+.school-card .school-meta { display: flex; gap: 12px; margin-top: 6px; font-size: 13px; color: var(--gray-700); }
+.school-card .badge { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.badge-985 { background: #fef3c7; color: #92400e; }
+.badge-211 { background: #e0e7ff; color: #3730a3; }
+
+.empty-state { text-align: center; padding: 60px 20px; color: var(--gray-500); font-size: 14px; }
+
+.footer { text-align: center; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--gray-200); }
+.footer #qrcode { display: inline-block; }
+.footer .footer-note { font-size: 12px; color: var(--gray-500); margin-top: 8px; }
+
+@media (max-width: 420px) {
+  .results { flex-direction: column; }
+  .container { padding: 12px 12px 32px; }
+}
+
+.no-results { text-align: center; padding: 20px; color: var(--gray-500); font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>河南高考志愿推荐</h1>
+      <p class="subtitle">2025年物理类 · 985 / 211 院校专业组</p>
+    </header>
+
+    <div class="input-mode-tabs">
+      <button class="mode-tab active" data-mode="score">按分数</button>
+      <button class="mode-tab" data-mode="rank">按位次</button>
+    </div>
+
+    <div class="search-area">
+      <div class="input-wrapper">
+        <input type="number" id="scoreInput" class="main-input" placeholder="输入你的预期分数" min="0" max="750">
+        <span class="input-unit">分</span>
+      </div>
+      <div class="input-wrapper rank-input-wrapper" style="display:none">
+        <input type="number" id="rankInput" class="main-input" placeholder="输入你的省排名" min="1">
+        <span class="input-unit">名</span>
+      </div>
+      <button id="searchBtn" class="search-btn">查询推荐</button>
+    </div>
+
+    <div class="category-filter" id="categoryFilter" style="display:none">
+      <button class="cat-btn active" data-cat="全部">全部</button>
+      <button class="cat-btn" data-cat="理工">理工</button>
+      <button class="cat-btn" data-cat="医学">医学</button>
+      <button class="cat-btn" data-cat="经管">经管</button>
+      <button class="cat-btn" data-cat="农林">农林</button>
+      <button class="cat-btn" data-cat="综合">综合</button>
+    </div>
+
+    <div class="results" id="results" style="display:none">
+      <div class="result-column" id="columnReach">
+        <div class="column-header column-reach">冲刺</div>
+        <div class="column-info">+5 ~ +15分</div>
+        <div class="card-list" id="reachList"></div>
+      </div>
+      <div class="result-column" id="columnMatch">
+        <div class="column-header column-match">稳妥</div>
+        <div class="column-info">-5 ~ +5分</div>
+        <div class="card-list" id="matchList"></div>
+      </div>
+      <div class="result-column" id="columnSafe">
+        <div class="column-header column-safe">保底</div>
+        <div class="column-info">-5 ~ -15分</div>
+        <div class="card-list" id="safeList"></div>
+      </div>
+    </div>
+
+    <div class="empty-state" id="emptyState">
+      <p>输入预期分数或位次，查看冲稳保三档推荐</p>
+    </div>
+
+    <footer class="footer">
+      <div id="qrcode"></div>
+      <p class="footer-note">扫码分享给同学</p>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script>
+// 全局状态
+let schoolData = [];
+let currentMode = 'score';
+let currentCategory = '全部';
+let currentResults = { reach: [], match: [], safe: [] };
+
+// 分数-位次近似对照表（用于位次转分数）
+const scoreRankMap = [
+  { score: 700, rank: 108 },
+  { score: 690, rank: 416 },
+  { score: 680, rank: 1146 },
+  { score: 670, rank: 2579 },
+  { score: 660, rank: 4874 },
+  { score: 650, rank: 8281 },
+  { score: 640, rank: 11500 },
+  { score: 630, rank: 17000 },
+  { score: 620, rank: 23000 },
+  { score: 610, rank: 29000 },
+  { score: 600, rank: 45887 },
+  { score: 590, rank: 53000 },
+  { score: 580, rank: 71205 },
+  { score: 570, rank: 90000 },
+  { score: 560, rank: 105000 },
+  { score: 550, rank: 117829 },
+  { score: 540, rank: 131000 },
+  { score: 535, rank: 143976 }
+];
+
+function rankToScore(rank) {
+  if (rank <= scoreRankMap[0].rank) return scoreRankMap[0].score;
+  for (let i = scoreRankMap.length - 1; i >= 0; i--) {
+    if (rank >= scoreRankMap[i].rank) return scoreRankMap[i].score;
+  }
+  return scoreRankMap[scoreRankMap.length - 1].score;
+}
+
+function classify(score, schoolScore) {
+  const diff = schoolScore - score;
+  if (diff > 5 && diff <= 15) return 'reach';
+  if (diff >= -5 && diff <= 5) return 'match';
+  if (diff >= -15 && diff < -5) return 'safe';
+  return null;
+}
+
+function search() {
+  let score;
+
+  if (currentMode === 'score') {
+    score = parseInt(document.getElementById('scoreInput').value);
+    if (isNaN(score) || score < 0 || score > 750) return;
+  } else {
+    const rank = parseInt(document.getElementById('rankInput').value);
+    if (isNaN(rank) || rank < 1) return;
+    score = rankToScore(rank);
+  }
+
+  const reach = [], match = [], safe = [];
+
+  schoolData.forEach(item => {
+    if (currentCategory !== '全部' && item.category !== currentCategory) return;
+    const tier = classify(score, item.score);
+    if (tier === 'reach') reach.push(item);
+    else if (tier === 'match') match.push(item);
+    else if (tier === 'safe') safe.push(item);
+  });
+
+  reach.sort((a, b) => a.score - b.score);
+  match.sort((a, b) => b.score - a.score);
+  safe.sort((a, b) => b.score - a.score);
+
+  currentResults = { reach, match, safe };
+  renderResults();
+}
+
+function createCard(item) {
+  const badgeClass = item.type === '985' ? 'badge-985' : 'badge-211';
+  return `
+    <div class="school-card">
+      <div class="school-name">${item.school} <span class="badge ${badgeClass}">${item.type}</span></div>
+      <div class="school-group">${item.group}</div>
+      <div class="school-meta">
+        <span>投档线: <strong>${item.score}</strong>分</span>
+        <span>位次: <strong>${item.rank.toLocaleString()}</strong>名</span>
+      </div>
+    </div>
+  `;
+}
+
+function renderResults() {
+  const { reach, match, safe } = currentResults;
+  const hasResults = reach.length > 0 || match.length > 0 || safe.length > 0;
+
+  document.getElementById('emptyState').style.display = hasResults ? 'none' : 'block';
+  document.getElementById('results').style.display = hasResults ? 'flex' : 'none';
+  document.getElementById('categoryFilter').style.display = hasResults ? 'flex' : 'none';
+
+  if (!hasResults) return;
+
+  document.getElementById('reachList').innerHTML = reach.length > 0
+    ? reach.map(createCard).join('')
+    : '<div class="no-results">暂无匹配</div>';
+  document.getElementById('matchList').innerHTML = match.length > 0
+    ? match.map(createCard).join('')
+    : '<div class="no-results">暂无匹配</div>';
+  document.getElementById('safeList').innerHTML = safe.length > 0
+    ? safe.map(createCard).join('')
+    : '<div class="no-results">暂无匹配</div>';
+}
+
+// 事件绑定
+document.getElementById('searchBtn').addEventListener('click', search);
+
+document.querySelectorAll('.mode-tab').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.mode-tab').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    currentMode = this.dataset.mode;
+    document.getElementById('scoreInput').parentElement.style.display = currentMode === 'score' ? 'flex' : 'none';
+    document.getElementById('rankInput').parentElement.style.display = currentMode === 'rank' ? 'flex' : 'none';
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('categoryFilter').style.display = 'none';
+    document.getElementById('emptyState').style.display = 'block';
+  });
+});
+
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('cat-btn')) {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    currentCategory = e.target.dataset.cat;
+    if (currentResults.reach.length > 0 || currentResults.match.length > 0 || currentResults.safe.length > 0) {
+      search();
+    }
+  }
+});
+
+document.getElementById('scoreInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') search();
+});
+document.getElementById('rankInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') search();
+});
+
+// 加载数据
+fetch('data.json')
+  .then(res => res.json())
+  .then(data => {
+    schoolData = data;
+    console.log('已加载 ' + data.length + ' 条数据');
+  })
+  .catch(err => console.error('数据加载失败:', err));
+
+// QR 码：指向当前页面 URL（部署到 GitHub Pages 后自动生效）
+(function initQR() {
+  const url = window.location.href;
+  if (url.startsWith('http') && typeof QRCode !== 'undefined') {
+    new QRCode(document.getElementById('qrcode'), {
+      text: url,
+      width: 100,
+      height: 100,
+      colorDark: '#111827',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  }
+})();
+  </script>
+</body>
+</html>
