@@ -304,9 +304,7 @@ document.addEventListener('click', function(e) {
     document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
     e.target.classList.add('active');
     currentCategory = e.target.dataset.cat;
-    if (currentResults.reach.length > 0 || currentResults.match.length > 0 || currentResults.safe.length > 0) {
-      search();
-    }
+    search();
   }
 });
 
